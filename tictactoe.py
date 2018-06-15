@@ -81,25 +81,23 @@ def drawNextPiece(point):
     x = point.getX()
     y = point.getY()
 
-    row = -1 # Starts at -1 since row index starts at 0
-    total = 0
-    while total < x:
-        total += PPS
-        row += 1
-    column = -1 # Starts at -1 since row index starts at 0
-    total = 0
-    while total < y:
-        total += PPS
-        column += 1
+    row = (x // PPS)
+    column = (y // PPS)
+    
+    if board[column][row] != '~':
+        print('Spot already taken!')
+        return
 
     global last
     if last == 'o': # Draw X
         drawX(row, column)
-        board[column].insert(row, 'x')
+        del board[column][row] # Remove placeholder
+        board[column].insert(row, 'x') # Add 'x'
         last = 'x'
     else: # Draw O
         drawO(row, column)
-        board[column].insert(row, 'o')
+        del board[column][row] # Remove placeholder
+        board[column].insert(row, 'o') # Add 'y'
         last = 'o'
  
 def initialize():
