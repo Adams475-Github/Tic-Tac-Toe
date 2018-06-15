@@ -8,8 +8,7 @@ column = int(input("How many rows and columns do you want?"))
 row = column
 windowSizeX = column * PPS
 windowSizeY = column * PPS
-
-board = [[]*column]*column
+board = [['~']*column for i in range(column)]
 
 def drawBoard(row, column, windowSizeX, windowSizeY, PPS):
     global win
@@ -34,57 +33,82 @@ def drawO(row, column):
     zg.Circle(center, PPS / 2).draw(win)
 
 def fillBoard():
-    last = 'y'
+    last = 'o'
     for x in range(column):
-        for y in range(row):
-            if last == 'y':
-                drawX(x, y)
+        for o in range(row):
+            if last == 'o':
+                drawX(x, o)
                 last = 'x'
             else:
-                drawO(x, y)
-                last = 'y'
-last = 'y'
+                drawO(x, o)
+                last = 'o'
+last = 'o'
 def onClick(point):
     drawNextPiece(point)
+    #printBoard()
     checkForWin()
 
 def checkForWin():
+    times = 0
+    lastColumn = 0
+    for x in range(column):
+        for y in range(column):
+            if board[x][y] == 'x':
+                times += 1
+                print(board[x][y], end=' ')
+            else:
+                print(board[x][y], end=' ')
+                times = 0
+            
+            if times >= column:
+                winFound('x')
+                return
+            
+        times = 0
+        print('')
+
+def winFound(winner):
+    print(winner, "WON!")
+    
+def printBoard():
     for i in range(column):
         for j in range(column):
-            print(board[i][j], end='')
+            print(board[i][j], end='') # Prevents a new line from being created
         print('')
+    print('')
 
 def drawNextPiece(point):
     x = point.getX()
     y = point.getY()
 
-    row = -1
+    row = -1 # Starts at -1 since row index starts at 0
     total = 0
     while total < x:
         total += PPS
         row += 1
-    column = -1
+    column = -1 # Starts at -1 since row index starts at 0
     total = 0
     while total < y:
         total += PPS
         column += 1
 
     global last
-    if last == 'y': # Draw X
+    if last == 'o': # Draw X
         drawX(row, column)
         board[column].insert(row, 'x')
         last = 'x'
     else: # Draw O
         drawO(row, column)
-        board[column].insert(row, 'y')
-        last = 'y'
+        board[column].insert(row, 'o')
+        last = 'o'
  
 def initialize():
 
     drawBoard(column, row, windowSizeX, windowSizeY, PPS)
 
     while runGame:
-        onClick(win.getMouse())
+        point = win.getMouse()
+        onClick(point)
 
     win.getMouse()
 
